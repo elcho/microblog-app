@@ -6,6 +6,7 @@ from app import app
 from app import login
 from hashlib import md5
 import jwt
+from time import time
 
 
 @login.user_loader
@@ -76,7 +77,6 @@ class User(UserMixin, db.Model):
         try:
             id = jwt.decode(token, app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']
-
         except:
             return
         return User.query.get(id)
