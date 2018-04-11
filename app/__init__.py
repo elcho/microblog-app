@@ -7,6 +7,8 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
 from config import Config
+from flask_moment import Moment
+from flask_bootstrap import Bootstrap
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -14,6 +16,8 @@ login = LoginManager()
 login.login_view = 'auth.login'
 #login.login_message = _l('Please log in to access this page.')
 mail = Mail()
+moment = Moment()
+bootstrap = Bootstrap()
 
 
 def create_app(config_class=Config):
@@ -24,6 +28,8 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login.init_app(app)
     mail.init_app(app)
+    bootstrap.init_app(app)
+    moment.init_app(app)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
