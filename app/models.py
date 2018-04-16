@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from flask import current_app
+from flask import current_app, url_for
 from flask_login import UserMixin
 from app import db
 from app import login
@@ -80,6 +80,26 @@ class User(UserMixin, db.Model):
         except:
             return
         return User.query.get(id)
+
+    def to_dict(self, include_email=False):
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'last_seen': self.last_seen.isoformat() + 'Z',
+            'about_me': self.about_me,
+            'post_count': self.posts.count(),
+            'follower_count': self.followers.count(),
+            'followed_count': self.followed.count(),
+            '_links': {
+                'self': url_for('api.get_user', id=self.id),
+                'followers': url_for('api.get_followers', id=self.id),
+                'followed': url_for('api.get_followed', id=self.id),
+                'avatar': self.avatar(128)
+            }
+        }
+        if include_email:
+            data['email'] = self.email
+        return data
 
 
 class Post(db.Model):
